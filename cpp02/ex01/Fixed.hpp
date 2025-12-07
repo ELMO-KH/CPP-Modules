@@ -6,13 +6,13 @@
 class Fixed
 {
 private:
-	int _fixedPointValue;
-	static const int _fractionalBits = 8;
+	int 				_fixedPointValue;
+	static const int 	_fractionalBits = 8;
 
 public:
 	Fixed();							  // Default constructor
-	Fixed(const Fixed &other);			  // Copy constructor
-	Fixed &operator=(const Fixed &other); // Copy assignment operator
+	Fixed(const Fixed &copy);			  // Copy constructor
+	Fixed &operator=(const Fixed &copy); // Copy assignment operator
 	Fixed(const int value);
 	Fixed(const float value);
 	~Fixed();							  // Destructor
@@ -23,4 +23,5 @@ public:
 	int toInt(void) const;
 };
 
+std::ostream &operator<<(std::ostream &out, const Fixed &fixed);
 #endif

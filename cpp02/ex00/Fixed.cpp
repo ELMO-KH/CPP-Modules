@@ -1,21 +1,22 @@
 #include "Fixed.hpp"
 
-Fixed::Fixed() : _fixedPointValue(0)
+Fixed::Fixed()
 {
 	std::cout << "Default constructor called" << std::endl;
+	this->setRawBits(0);
 }
 
-Fixed::Fixed(const Fixed &other)
+Fixed::Fixed(const Fixed &copy)
 {
 	std::cout << "Copy constructor called" << std::endl;
-	*this = other;
+	*this = copy;
 }
 
-Fixed &Fixed::operator=(const Fixed &other)
+Fixed &Fixed::operator=(const Fixed &copy)
 {
 	std::cout << "Copy assignment operator called" << std::endl;
-	if (this != &other)
-		this->_fixedPointValue = other.getRawBits();
+	if (this != &copy)
+		this->_fixedPointValue = copy.getRawBits();
 	return *this;
 }
 
