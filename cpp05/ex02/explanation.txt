@@ -1,0 +1,59 @@
+# Exercise 02: Abstract Forms - Inheritance & Polymorphism
+
+## 1. Abstract Base Class (AForm)
+Achnou l farq bin `Form` (ex01) w `AForm` (ex02)?
+`Form` kant class 3adiya. Tqder tdir `Form f("bla", 1, 1);`.
+`AForm` hia **Abstract Class**. Maqdrch tcree objet manha direct. `AForm f;` -> **Error de compilation**.
+
+### Kifach wellat Abstract?
+Bsabab had syntax:
+```cpp
+virtual void execute(Bureaucrat const & executor) const = 0;
+```
+Had `= 0` hiya **Pure Virtual Function**. Katgoul: "Ana k-Form, ma3rftch kifach n-executi rassi. Li wret menni (Inherit) HOWA li khasso yfesser kifach."
+-   Lhdaf: Bach nmen3o creation d "Form" majhoula. Kaina ghi "Shrubbery Form", "Robotomy Form", etc.
+
+## 2. Polymorphism (Ta3addod l achkal)
+Hada concept qwi bzaf.
+Wakha 3ndna anwa3 mkhtalfa (`ShrubberyCreationForm`, `RobotomyRequestForm`...), kolhom aslan `AForm`.
+Hada kaykhllina nsta3mlo pointers:
+```cpp
+AForm* f1 = new RobotomyRequestForm("Bender");
+AForm* f2 = new ShrubberyCreationForm("Garden");
+```
+F1 w F2 bjoj `AForm*`. Walakin melli kandiro `f1->execute()`, C++ kayrf bli f1 rah "f lewel" Robotomy, w kay3iyet l execute dial Robotomy. hadchi smito **Dynamic Dispatch** ola **Run-time Polymorphism**.
+
+## 3. Virtual Destructor
+Chouf `AForm.hpp`:
+```cpp
+virtual ~AForm();
+```
+Ahham syntax f Inheritance.
+Melli kandiro `delete f1;` (li howa type `AForm*`), Compiler khasso y3iyet l destructor.
+-   Ila ma kantch `virtual`, ay3iyet ghi l destructor d `AForm`. Ay nsa d `RobotomyRequestForm`. -> **Memory Leak**.
+-   Melli hiya `virtual`: Kaybda b Destructor d l weld (`Robotomy`), 3ad d l ab (`AForm`). -> Clean.
+
+## 4. Implementation Details d Forms
+Koul form katdir logical mkhtalf f `execute()`:
+
+### A. ShrubberyCreationForm
+-   **Filesystem**: Khddamna `std::ofstream`.
+-   **Logic**: `outfile.open(target + "_shrubbery")`.
+-   Syntax: `<<` bash nktbo f fichier bhal `cout`.
+-   Concept ASCII Art: Grsem trees b text.
+
+### B. RobotomyRequestForm
+-   **Randomness**: Khddamna `std::srand` w `std::rand`.
+-   Ila khddamti `rand()` bou7dou, ay3tik nfs rqm dima. Khassk `srand(time(NULL))` f Main bash tbeddel "Seed".
+-   Logic: `if (rand() % 2 == 0) success else fail`. 50/50 chance.
+
+### C. PresidentialPardonForm
+-   **The simplest**. Ghi `cout`. Ktabiyen anna l polymorphism kayhzz logic sahel w s3ib f nfs l waqt.
+
+## 5. Const Correctness f execute
+L method `execute` hiya `const`:
+```cpp
+void execute(...) const;
+```
+Hadchi kay3ni anna l processus d execution **Makhassouch ybaddel l Form**.
+L form katbqa msinya, smitha hiya hiya. L2athar (Side effects) kaykounou 3la lkharij (Files, Terminal, etc), machi 3la l objet brasou.

@@ -1,0 +1,49 @@
+# Exercise 00: Bureaucrat - Exceptions & Syntax Detail
+
+## 1. Lmafhoum Ljidid: Exceptions (Istithna'at)
+F C (Langage C), melli kanbghiw ngeriwr l'errors, konna kanrej3o des valeurs bhal `-1` ola `NULL`. Mital: `if (open() == -1)`.
+F C++, hadchi qdim. Daba 3ndna **Exceptions**.
+
+### Kifach khddama?
+-   **throw**: Melli katwqe3 chi haja "ghalata" (error), kanlo7o (throw) objet (bhal qmboula).
+-   **try**: Ay code chakk fih iqder ylo7 exception, kandiroh wast `try { ... }`.
+-   **catch**: Hna fin kancheddo dik l'exception ila tla7et, w kant3amlo m3aha (kanprintiw error, kanfixiw mochkil, etc).
+
+**3lach hsen men if/else?**
+Hit l'exception katfar3 l execution 7ta l aqrab bloc dial `catch`. Ma7tajch tbqa dir `check return value` f kol ligne.
+
+## 2. Syntax Jdid: Exception Class Specifiers
+F `Bureaucrat.hpp`, dert classes wst class:
+```cpp
+class GradeTooHighException : public std::exception {
+    public:
+        virtual const char* what() const throw();
+};
+```
+
+Had syntax fih bzaf maytgal:
+1.  **Nested Class**: `GradeTooHighException` kayna DAKHEL `Bureaucrat`. Bach t3iyet liha barra khassk tgol `Bureaucrat::GradeTooHighException`. Hada "scoping", bach maytkhaltouch lik smiyat m3a classes khrin.
+2.  **`public std::exception`**: Had class katwrit men `std::exception` (standard C++ class). Hada howa standard bach tkon exception mo7tarama qadra t-catcha b `catch(std::exception &e)`.
+3.  **`virtual const char* what() const throw()`**:
+    -   `virtual`: Ya3ni qadra tdar liha override men classes khrin.
+    -   `const char*`: Hada l type li katrejje3 (string C-style, message d lghalat).
+    -   `what()`: Hada howa l function standard li katjiv message d l'exception.
+    -   `const` (lweehda): Kat3ni anna had l function makatbeddelch l objet (l'exception baqya hiya hiya).
+    -   `throw()` (lleykhra): Hadi exception specification (C++98 style). Kat3ni "Ana kan7lef billah anna had fonction `what()` 3emmerha matlo7 exception okhra". Ya3ni safe 100%.
+
+## 3. Initialization Lists & Const Attributes
+F constructor `Bureaucrat(string name, ...)`:
+```cpp
+Bureaucrat::Bureaucrat(...) : _name(name), _grade(grade) { ... }
+```
+3lach darna `_name(name)` hna w madernach `_name = name;` dakhéél?
+-   Hit `_name` hiya **`const std::string`**.
+-   **Const** khasso yt-initialisa **f waqt l khalq (creation)**, machi assignation men be3d. L blasa lwahida fin tqder t-initialisi `const` members hiya **Initializer List** (bin `:` w `{`).
+
+## 4. Operator Overloading (<<)
+Bach tqder dir `std::cout << bob << std::endl`, khassk t-overloader `operator<<`.
+```cpp
+std::ostream &operator<<(std::ostream &out, const Bureaucrat &b);
+```
+-   **3lach barra class?** Hit `std::cout` (li hiya `std::ostream`) hiya li '3la lisr'. Kon dertiha method dakhiliya, atwelli khassk tkteb `bob << cout` (majayach).
+-   **Return `std::ostream&`**: Bach tqder tchaini (dir `cout << a << b << c`). Koll wehda katrejje3 `cout` bach li moraha ysta3mlha.

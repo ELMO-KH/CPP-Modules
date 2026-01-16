@@ -1,0 +1,69 @@
+# Exercise 01: Forms - Interaction & Logic Detail
+
+## 1. Class Interaction (Tafa3ol bin Classes)
+Hna fin C++ kaybda ywalli "Object Oriented" dyal bss7. 3ndna joj dl "Kainat" (Entities):
+-   **Bureaucrat**: Lfa3il (Actor). Howa li "kaysinyi".
+-   **Form**: L maf3oul bih (Object). Hiya li "katsinya".
+
+### Logic dial `signForm`
+Melli `bob.signForm(contract)` kat3iyet, ach kaywqe3 b detail?
+1.  **Main** kay3iyet l `bob.signForm(contract)`.
+2.  **Bureaucrat** dakhél `signForm`, kay3iyet l `contract.beSigned(bob)`. "Ha ana, bob, bghit nsinyik a contract".
+3.  **Form** dakhél `beSigned`, katchouf `bob`.
+    -   Katchouf grade dial bob (`bob.getGrade()`).
+    -   Kattqarneh m3a l qanoun dialha (`_gradeToSign`).
+    -   Ila grade dial bob **kbar** (ya3ni rqm sghar) men l matloub: `_isSigned` katwelli `true`.
+    -   Ila grade dial bob **sghar** (ya3ni rqm kbar): Form kaddir `throw Form::GradeTooLowException()`.
+4.  **Rjou3 l Bureaucrat**:
+    -   Ila makainch throw: `contract.beSigned` katrje3 3adi. Bureaucrat kayprinti "Success".
+    -   Ila kan throw: Exception katnaqqez (propagate) htal l `catch` li wst `signForm`. Bureaucrat kayprinti "Reason".
+
+Had "Dance" bin l objects katsemma **Delegation**. Bureaucrat makaysinyich rassou, kaykellef l Form tsinyi rassha.
+
+## 2. Forward Declaration
+F `Form.hpp` darna:
+```cpp
+class Bureaucrat; // Forward declaration
+class Form {
+    void beSigned(const Bureaucrat &b);
+    ...
+};
+```
+O f `Bureaucrat.hpp` darna:
+```cpp
+class Form; // Forward declaration
+class Bureaucrat {
+    void signForm(Form &f);
+    ...
+};
+```
+
+**3lach? Circular Dependency.**
+-   `Form` mhhtaja t3ref chnowa `Bureaucrat` (f `beSigned`).
+-   `Bureaucrat` mhtaj y3ref chnowa `Form` (f `signForm`).
+-   Ila derti `#include "Bureaucrat.hpp"` f Form, w `#include "Form.hpp"` f Bureaucrat -> Compiler ghaydoukh (infite loop dial includes).
+Solution: Kandiro `class Name;` (ya3ni "tiiq bia a compiler, rah kayna wahd class smitha Name, blati w nwerriha lik"). O l `#include` l haqiqi kandirouh f `.cpp` file, machi f header.
+
+## 3. Const Rules Attributes
+L attributes bhal `_gradeToSign` homa `const`.
+```cpp
+const int _gradeToSign;
+```
+Hadchi fih Logic mhhim: **L qawanin makatbdelch**.
+Contract smitou "B" w khasso grade 50 bach ytsinya. Machi ghda ywelli khasso 60. Hadchi 3lach houma `const`.
+O bhal ex00, hydchi kayfrd 3lina nsta3mlo **Initializer List** f Constructor.
+
+## 4. Copy Constructor & Assignment Operator
+Melli 3ndna attributes `const`, Assignement Operator (`=`) fih mochkil.
+`a = b` kat3ni "khed qiyam b w hatt-hom f a".
+Walakin `const` maqiyssouch ytbeddel!
+Dakchi 3lach f Implementation `Form::operator=` darna:
+```cpp
+if (this != &other) {
+    this->_isSigned = other._isSigned;
+    // _gradeToSign w _name maqesnahomch hit const!
+}
+```
+L Logic hna: Ila copiet contract mn contract akhor, kan copie wach msinyi ola la. Walakin **Smia** w **Grade Matloub** homa "Haouiya" (Identity) dial l form, maqdrouch ytbeddlo, donc khallinahom.
+
+Hadchi mohtaram f C++, walakin f chi design patterns khrin qder nmn3o copie ga3 (`private` copy constructor).
