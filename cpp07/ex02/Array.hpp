@@ -14,7 +14,7 @@ private:
 public:
 	Array() : _array(NULL), _size(0) {}
 
-	Array(unsigned int n) : _array(new T[n]()), _size(n) {}
+	Array(unsigned int n) : _array(new T[n]), _size(n) {}
 
 	Array(const Array &other) : _array(NULL), _size(0)
 	{

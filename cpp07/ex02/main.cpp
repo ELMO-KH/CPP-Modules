@@ -1,10 +1,7 @@
 #include <iostream>
 #include "Array.hpp"
-#include <cstdlib>
-#include <ctime>
 
 #define MAX_VAL 750
-
 int main(int, char **)
 {
 	Array<int> numbers(MAX_VAL);
@@ -16,6 +13,7 @@ int main(int, char **)
 		numbers[i] = value;
 		mirror[i] = value;
 	}
+	// SCOPE
 	{
 		Array<int> tmp = numbers;
 		Array<int> test(tmp);
@@ -50,26 +48,6 @@ int main(int, char **)
 	{
 		numbers[i] = rand();
 	}
-	delete[] mirror;
-
-	std::cout << "\n=== Additional Tests ===" << std::endl;
-
-	Array<int> empty;
-	std::cout << "Empty array size: " << empty.size() << std::endl;
-
-	Array<std::string> strings(5);
-	strings[0] = "Hello";
-	strings[1] = "World";
-	std::cout << "String array[0]: " << strings[0] << std::endl;
-	std::cout << "String array[1]: " << strings[1] << std::endl;
-
-	Array<float> floats(3);
-	floats[0] = 3.14f;
-	floats[1] = 2.71f;
-	floats[2] = 1.41f;
-	std::cout << "Float array[0]: " << floats[0] << std::endl;
-	std::cout << "Float array size: " << floats.size() << std::endl;
-
-	std::cout << "\n=== All tests passed! ===" << std::endl;
+	delete[] mirror; //
 	return 0;
 }
