@@ -67,7 +67,6 @@ void ScalarConverter::convert(const std::string &literal)
         return;
     }
 
-    // CHAR
     if (std::isnan(value) || std::isinf(value) || value < 0 || value > 127)
     {
         std::cout << "char: impossible" << std::endl;
@@ -81,7 +80,6 @@ void ScalarConverter::convert(const std::string &literal)
         std::cout << "char: '" << static_cast<char>(value) << "'" << std::endl;
     }
 
-    // INT
     if (std::isnan(value) || std::isinf(value) || value < std::numeric_limits<int>::min() || value > std::numeric_limits<int>::max())
     {
         std::cout << "int: impossible" << std::endl;
@@ -91,7 +89,6 @@ void ScalarConverter::convert(const std::string &literal)
         std::cout << "int: " << static_cast<int>(value) << std::endl;
     }
 
-    // FLOAT
     if (std::isnan(value))
         std::cout << "float: nanf" << std::endl;
     else if (std::isinf(value))
@@ -99,7 +96,6 @@ void ScalarConverter::convert(const std::string &literal)
     else
         std::cout << "float: " << std::fixed << std::setprecision(1) << static_cast<float>(value) << "f" << std::endl;
 
-    // DOUBLE
     if (std::isnan(value))
         std::cout << "double: nan" << std::endl;
     else if (std::isinf(value))
