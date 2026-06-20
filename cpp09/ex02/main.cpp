@@ -1,21 +1,19 @@
-# include "PmergeMe.hpp"
+#include "PmergeMe.hpp"
 
-int	check = 0;
+#include <exception>
+#include <iostream>
 
-int	main(int arc, char **arv) {
-
-	if (arc == 1) {
-		std::cerr << "ERROR";
-		std::endl(std::cerr);
+int	main( int argc, char **argv ) {
+	if (argc < 2) {
+		std::cerr << "Error" << std::endl;
 		return 1;
 	}
 	try {
-		PmergeMe	PmergeMe_;
+		PmergeMe	sorter;
 
-		PmergeMe_.hanleArgument(arv);
-	}catch ( std::exception &e ) {
-		std::cerr << "ERROR: " << e.what();
-		std::endl(std::cerr);
+		sorter.run(argc, argv);
+	} catch (const std::exception &) {
+		std::cerr << "Error" << std::endl;
 		return 1;
 	}
 	return 0;

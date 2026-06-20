@@ -1,128 +1,314 @@
+#include "PmergeMe.hpp"
 
-# include "PmergeMe.hpp"
+#include <algorithm>
+#include <cerrno>
+#include <climits>
+#include <cstdlib>
+#include <iomanip>
+#include <sstream>
+#include <stdexcept>
+
+size_t	PmergeMe::_comparison_count = 0;
+
+PmergeMe::Element::Element( void ) : value(0), id(0) {}
+
+PmergeMe::Element::Element( int value, size_t id ) : value(value), id(id) {}
+
+PmergeMe::Pair::Pair( const Element &first, const Element &second ) :
+	small(first),
+	large(second) {
+	if (less(large, small))
+		std::swap(small, large);
+}
+
+PmergeMe::Pending::Pending( const Element &value, size_t bound_id ) :
+	value(value),
+	bound_id(bound_id),
+	has_bound(true) {}
+
+PmergeMe::Pending::Pending( const Element &value ) :
+	value(value),
+	bound_id(0),
+	has_bound(false) {}
 
 PmergeMe::PmergeMe( void ) {}
 
-PmergeMe::PmergeMe( const  PmergeMe &Other ) {
-	*this = Other;
+PmergeMe::PmergeMe( const PmergeMe &other ) {
+	*this = other;
 }
 
-PmergeMe &PmergeMe::operator=( const PmergeMe &Other ) {
-	if (this != &Other) {
-		this->_vectorData = Other._vectorData;
-		this->_dequeData = Other._dequeData;
+PmergeMe &PmergeMe::operator=( const PmergeMe &other ) {
+	if (this != &other) {
+		_vector_data = other._vector_data;
+		_deque_data = other._deque_data;
 	}
 	return *this;
 }
 
 PmergeMe::~PmergeMe( void ) {}
 
-bool	PmergeMe::IsDigit( std::string &str) {
+void	PmergeMe::run( int argc, char **argv ) {
+	clock_t	start;
+	clock_t	vector_time;
+	clock_t	deque_time;
+	size_t	vector_comparisons;
+	size_t	deque_comparisons;
 
-	short	i = 0;
-	if (str[i] == '+') i = 1;
-	for (; str[i]; i++) {
-		if (!std::isdigit(str[i])) return false;
-	}
-	return true;
-}
-
-void	PmergeMe::PrintBefor(){
-	std::cout << "Before : ";
-	for (_it it = _vectorData.begin(); it != _vectorData.end(); it++)
-		std::cout << *it << " " ;
-	std::endl(std::cout);
-}
-
-void	printVector(std::vector<int>vec) {
-	static int Level = 1;
-	std::cout << "Pair Level: " << Level++ << std::endl;
-	for (_it i = vec.begin(); i != vec.end(); i++)
-		std::cout << " " << *i ;
-	std::cout << std::endl;
-
-}
-
-void	PmergeMe::PrintAfter( void ) {
-
-	std::cout << "After : ";
-	for (_it it = _vectorData.begin(); it != _vectorData.end(); it++)
-		std::cout << *it << " " ;
-	std::endl(std::cout);
-}
-
-size_t	GeneratJacobsthalNumber(size_t k) {
-	if (k == 0) return 0;
-	if (k == 1) return 1;
-	size_t prev2 = 0, prev1 = 1;
-	for (size_t i = 2; i <= k; i++) {
-		size_t result = prev1 + 2 * prev2;
-		prev2 = prev1;
-		prev1 = result;
-	}
-	return prev1;
-}
-
-void	PrintStatusContainer( std::vector<int> &Container, clock_t duration ){
-	std::cout.precision(6);
-	double seconds = (double)duration / CLOCKS_PER_SEC;
-	double microseconds = seconds * 1000000; 
-	std::cout << "Time to process a range of " << Container.size() <<" elements with std::[..] : " << std::fixed << microseconds << " us" << std::endl;
-}
-
-void	PmergeMe::sort( void ) {
-
-	if (_vectorData.size() == 1) {
+	parseArguments(argc, argv);
+	if (isSorted(_vector_data)) {
+		std::cout << "Already sorted" << std::endl;
 		return ;
 	}
+	printBefore();
 
-	clock_t startTimeVector, endTimeVector;
-	startTimeVector = clock();
-	PairingPhase(_vectorData, 1);
-	endTimeVector = clock() - startTimeVector;
-	PrintAfter();
-	PrintStatusContainer(_vectorData, endTimeVector);
+	resetComparisonCount();
+	start = clock();
+	sortContainer(_vector_data);
+	vector_time = clock() - start;
+	vector_comparisons = getComparisonCount();
 
-	clock_t	startTimeDeque, endTimeDeque;
-	startTimeDeque	= clock();
-	PairingPhase(_dequeData, 1);
-	endTimeDeque = clock() - startTimeDeque;
-	PrintStatusContainer(_dequeData, endTimeDeque);
+	resetComparisonCount();
+	start = clock();
+	sortContainer(_deque_data);
+	deque_time = clock() - start;
+	deque_comparisons = getComparisonCount();
+
+	printAfter();
+	printTiming("std::vector", _vector_data.size(), vector_time);
+	printTiming("std::deque", _deque_data.size(), deque_time);
+	printComparisons("std::vector", vector_comparisons);
+	printComparisons("std::deque", deque_comparisons);
 }
 
-void	PmergeMe::hanleArgument( char **const arv) {
+void	PmergeMe::parseArguments( int argc, char **argv ) {
+	for (int i = 1; i < argc; i++) {
+		std::istringstream	stream(argv[i]);
+		std::string			token;
 
-	std::set<int>	set_;
-	for (int index = 1; arv[index]; index++) {
-		std::istringstream	ss(arv[index]);
-		while (!ss.eof()) {
-			std::string		token;
-			ss >> token;
-			if (token.empty())
-				throw std::invalid_argument("Argument is Empty");
-			if (std::string("0123456789+-").find(token[0]) == std::string::npos)
-        			throw std::invalid_argument("Arguments is invalid");
-			if (token[0] == '-') 
-				throw std::invalid_argument("Argument Is Negative");
-			if (!IsDigit(token))
-				throw std::invalid_argument("An Argument is invalid");
-			std::pair<std::set<int>::iterator, bool> check = set_.insert(std::atoi(token.c_str()));
-		        if (check.second == false)
-                		throw std::invalid_argument("Some Duplicate Found");
-			this->_vectorData.push_back(std::atoi(token.c_str()));
-			this->_dequeData.push_back(std::atoi(token.c_str()));
+		while (stream >> token) {
+			int	value = parsePositiveInteger(token);
+
+			_vector_data.push_back(value);
+			_deque_data.push_back(value);
+		}
+		if (stream.bad())
+			throw std::invalid_argument("Error");
+	}
+	if (_vector_data.empty())
+		throw std::invalid_argument("Error");
+}
+
+void	PmergeMe::printBefore( void ) const {
+	std::cout << "Before:";
+	for (std::vector<int>::const_iterator it = _vector_data.begin(); it != _vector_data.end(); ++it)
+		std::cout << " " << *it;
+	std::cout << std::endl;
+}
+
+void	PmergeMe::printAfter( void ) const {
+	std::cout << "After:";
+	for (std::vector<int>::const_iterator it = _vector_data.begin(); it != _vector_data.end(); ++it)
+		std::cout << " " << *it;
+	std::cout << std::endl;
+}
+
+void	PmergeMe::printTiming( const std::string &name, size_t size, clock_t duration ) const {
+	double	microseconds = static_cast<double>(duration) * 1000000.0 / CLOCKS_PER_SEC;
+
+	std::cout << "Time to process a range of " << size << " elements with " << name
+		<< " : " << std::fixed << std::setprecision(5) << microseconds << " us" << std::endl;
+}
+
+void	PmergeMe::printComparisons( const std::string &name, size_t comparisons ) const {
+	std::cout << "Comparisons made with " << name << " : " << comparisons << std::endl;
+}
+
+int	PmergeMe::parsePositiveInteger( const std::string &token ) {
+	char	*end;
+	long	value;
+
+	if (token.empty())
+		throw std::invalid_argument("Error");
+	for (size_t i = 0; i < token.length(); i++) {
+		if (i == 0 && token[i] == '+')
+			continue;
+		if (token[i] < '0' || token[i] > '9')
+			throw std::invalid_argument("Error");
+	}
+	errno = 0;
+	value = std::strtol(token.c_str(), &end, 10);
+	if (*end != '\0' || errno == ERANGE || value < 0 || value > INT_MAX)
+		throw std::invalid_argument("Error");
+	return static_cast<int>(value);
+}
+
+bool	PmergeMe::less( const Element &lhs, const Element &rhs ) {
+	_comparison_count++;
+	if (lhs.value != rhs.value)
+		return lhs.value < rhs.value;
+	return lhs.id < rhs.id;
+}
+
+void	PmergeMe::resetComparisonCount( void ) {
+	_comparison_count = 0;
+}
+
+size_t	PmergeMe::getComparisonCount( void ) {
+	return _comparison_count;
+}
+
+size_t	PmergeMe::jacobsthal( size_t index ) {
+	size_t	previous = 0;
+	size_t	current = 1;
+
+	if (index == 0)
+		return 0;
+	for (size_t i = 1; i < index; i++) {
+		size_t	next = current + (2 * previous);
+
+		previous = current;
+		current = next;
+	}
+	return current;
+}
+
+std::vector<PmergeMe::Element>
+PmergeMe::makeElements( const std::vector<int> &values ) {
+	std::vector<Element>	elements;
+
+	elements.reserve(values.size());
+	for (size_t i = 0; i < values.size(); i++)
+		elements.push_back(Element(values[i], i));
+	return elements;
+}
+
+std::vector<PmergeMe::Element>
+PmergeMe::makeElements( const std::deque<int> &values ) {
+	std::vector<Element>	elements;
+
+	elements.reserve(values.size());
+	for (size_t i = 0; i < values.size(); i++)
+		elements.push_back(Element(values[i], i));
+	return elements;
+}
+
+std::vector<size_t>	PmergeMe::makeInsertionOrder( size_t pending_size ) {
+	std::vector<size_t>	order;
+	size_t				previous;
+	size_t				current;
+	size_t				jacobsthal_index;
+
+	if (pending_size == 0)
+		return order;
+	order.reserve(pending_size);
+	previous = 1;
+	jacobsthal_index = 3;
+	current = jacobsthal(jacobsthal_index);
+	while (order.size() < pending_size) {
+		size_t	end = current - 1;
+		size_t	index;
+
+		if (end > pending_size)
+			end = pending_size;
+		index = end;
+		while (index >= previous) {
+			order.push_back(index - 1);
+			if (index == previous)
+				break;
+			index--;
+		}
+		previous = current;
+		jacobsthal_index++;
+		current = jacobsthal(jacobsthal_index);
+		if (current <= previous)
+			current = previous + 1;
+	}
+	return order;
+}
+
+std::vector<PmergeMe::Element>
+PmergeMe::mergeInsertionSort( const std::vector<Element> &input ) {
+	std::vector<Pair>		pairs;
+	std::vector<Element>		winners;
+	std::vector<Element>		sorted_winners;
+	std::vector<Element>		main_chain;
+	std::vector<Pending>		pending;
+	std::vector<size_t>		order;
+	bool					has_stray;
+	Element					stray;
+
+	if (input.size() < 2)
+		return input;
+	pairs.reserve(input.size() / 2);
+	winners.reserve(input.size() / 2);
+	has_stray = (input.size() % 2 != 0);
+	for (size_t i = 0; i + 1 < input.size(); i += 2) {
+		pairs.push_back(Pair(input[i], input[i + 1]));
+		winners.push_back(pairs.back().large);
+	}
+	if (has_stray)
+		stray = input.back();
+	sorted_winners = mergeInsertionSort(winners);
+	main_chain = sorted_winners;
+	if (sorted_winners.empty())
+		return input;
+	for (size_t i = 0; i < sorted_winners.size(); i++) {
+		for (size_t j = 0; j < pairs.size(); j++) {
+			if (pairs[j].large.id == sorted_winners[i].id) {
+				if (i == 0)
+					main_chain.insert(main_chain.begin(), pairs[j].small);
+				else
+					pending.push_back(Pending(pairs[j].small, pairs[j].large.id));
+				break;
+			}
 		}
 	}
-	PrintBefor();
-	sort();
-	bool sorted = true;
-	for (size_t i = 1; i < _vectorData.size(); i++) {
-		if (_vectorData[i] < _vectorData[i-1]) {
-			sorted = false;
-			break;
+	if (has_stray)
+		pending.push_back(Pending(stray));
+	order = makeInsertionOrder(pending.size());
+	for (size_t i = 0; i < order.size(); i++) {
+		Pending							&entry = pending[order[i]];
+		std::vector<Element>::iterator	bound = main_chain.end();
+		std::vector<Element>::iterator	position;
+
+		if (entry.has_bound)
+			bound = findById(main_chain, entry.bound_id);
+		position = upperBound(main_chain.begin(), bound, entry.value);
+		main_chain.insert(position, entry.value);
+	}
+	return main_chain;
+}
+
+std::vector<PmergeMe::Element>::iterator
+PmergeMe::findById( std::vector<Element> &chain, size_t id ) {
+	for (std::vector<Element>::iterator it = chain.begin(); it != chain.end(); ++it) {
+		if (it->id == id)
+			return it;
+	}
+	return chain.end();
+}
+
+std::vector<PmergeMe::Element>::iterator
+PmergeMe::upperBound(
+	std::vector<Element>::iterator first,
+	std::vector<Element>::iterator last,
+	const Element &value
+) {
+	std::vector<Element>::iterator	it;
+	size_t							count;
+	size_t							step;
+
+	count = last - first;
+	while (count > 0) {
+		it = first;
+		step = count / 2;
+		it += step;
+		if (!less(value, *it)) {
+			first = ++it;
+			count -= step + 1;
+		} else {
+			count = step;
 		}
 	}
-
-	std::cout << "\nVerification: " << (sorted ? "✓ CORRECTLY SORTED" : "✗ NOT SORTED") << std::endl;
-	std::cout << "Total comparisons made: " << check / 2 << std::endl;
+	return first;
 }
