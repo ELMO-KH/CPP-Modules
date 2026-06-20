@@ -1,7 +1,11 @@
 #ifndef ITER_HPP
 #define ITER_HPP
 
+<<<<<<< Updated upstream
 // #include <cstddef>
+=======
+#include <cstddef>
+>>>>>>> Stashed changes
 
 template <typename T, typename F>
 void iter(T *array, const size_t length, F function)
