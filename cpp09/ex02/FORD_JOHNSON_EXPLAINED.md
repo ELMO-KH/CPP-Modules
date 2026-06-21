@@ -20,33 +20,6 @@ Clean:
 make fclean
 ```
 
-## Subject Summary
-
-CPP09 ex02 kayطلب program اسمو `PmergeMe` kayakhod sequence ديال positive integers من command line, kay-sortihom باستعمال merge-insertion sort المعروف ب Ford-Johnson, وكيقارن الوقت بين `std::vector` و `std::deque`.
-
-Output expected normally fih:
-
-- `Before:` sequence before sorting.
-- `After:` sequence after sorting.
-- time with `std::vector`.
-- time with `std::deque`.
-
-Ana زدتها كذلك:
-
-- comparison counter for `std::vector`.
-- comparison counter for `std::deque`.
-
-## Big Idea
-
-Ford-Johnson / merge-insertion sort kaynقص عدد المقارنات مقارنة ب sorting عادي:
-
-1. Kanqsmou input l pairs.
-2. Fkol pair kanعرفو `small` و `large` بمقارنة وحدة.
-3. Kan-sortiw غير `large` values recursively.
-4. Kanbniw `main_chain` من sorted large values.
-5. `small` values kayb9aw f `pending`.
-6. Kandkhlo `pending` f `main_chain` باستعمال binary insertion.
-7. Order ديال insertion kayji من Jacobsthal باش search windows يبقاو قريبين من sizes بحال `2^k - 1`.
 
 ## Flowchart
 

@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <algorithm>
 
 class PmergeMe {
 public:
@@ -52,7 +53,7 @@ private:
 	void	printComparisons( const std::string &name, size_t comparisons ) const;
 
 	static int		parsePositiveInteger( const std::string &token );
-	static bool		less( const Element &lhs, const Element &rhs );
+	static bool		_comp( const Element &lhs, const Element &rhs );
 	static size_t	jacobsthal( size_t index );
 	static void		resetComparisonCount( void );
 	static size_t	getComparisonCount( void );
@@ -68,11 +69,6 @@ private:
 	static bool	isSorted( const Container &container );
 
 	static std::vector<Element>::iterator	findById( std::vector<Element> &chain, size_t id );
-	static std::vector<Element>::iterator	upperBound(
-		std::vector<Element>::iterator first,
-		std::vector<Element>::iterator last,
-		const Element &value
-	);
 };
 
 template <typename Container>

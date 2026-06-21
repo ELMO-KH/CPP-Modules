@@ -1,0 +1,269 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="2100" viewBox="0 0 1400 2100">
+	<defs>
+		<style>
+			.bg { fill: #f7f7f2; }
+			.title { font: 700 34px Arial, sans-serif; fill: #17202a; }
+			.subtitle { font: 400 16px Arial, sans-serif; fill: #34495e; }
+			.section { font: 700 24px Arial, sans-serif; fill: #17202a; }
+			.box { fill: #ffffff; stroke: #263238; stroke-width: 2; rx: 8; }
+			.box-blue { fill: #e8f1ff; stroke: #255c99; stroke-width: 2; rx: 8; }
+			.box-green { fill: #e9f7ef; stroke: #1e8449; stroke-width: 2; rx: 8; }
+			.box-yellow { fill: #fff4d6; stroke: #a66f00; stroke-width: 2; rx: 8; }
+			.box-red { fill: #fdecea; stroke: #b03a2e; stroke-width: 2; rx: 8; }
+			.decision { fill: #ffffff; stroke: #263238; stroke-width: 2; }
+			.text { font: 400 15px Arial, sans-serif; fill: #17202a; }
+			.small { font: 400 13px Arial, sans-serif; fill: #34495e; }
+			.note { font: 400 14px Arial, sans-serif; fill: #34495e; }
+			.edge { stroke: #263238; stroke-width: 2; fill: none; marker-end: url(#arrow); }
+			.edge-soft { stroke: #7f8c8d; stroke-width: 2; fill: none; marker-end: url(#arrow-soft); }
+			.label { font: 700 13px Arial, sans-serif; fill: #17202a; }
+		</style>
+		<marker id="arrow" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+			<path d="M2,2 L10,6 L2,10 Z" fill="#263238"/>
+		</marker>
+		<marker id="arrow-soft" markerWidth="12" markerHeight="12" refX="10" refY="6" orient="auto" markerUnits="strokeWidth">
+			<path d="M2,2 L10,6 L2,10 Z" fill="#7f8c8d"/>
+		</marker>
+	</defs>
+
+	<rect class="bg" x="0" y="0" width="1400" height="2100"/>
+
+	<text class="title" x="60" y="60">PmergeMe Ford-Johnson Flowchart</text>
+	<text class="subtitle" x="60" y="88">Graphical explanation dyal parsing, vector/deque sorting, recursion, pending insertion, upper_bound, w comparison counter.</text>
+
+	<!-- Program flow -->
+	<text class="section" x="60" y="145">1. Program flow</text>
+
+	<rect class="box-blue" x="80" y="180" width="180" height="55"/>
+	<text class="text" x="122" y="212">start program</text>
+
+	<polygon class="decision" points="390,165 500,208 390,250 280,208"/>
+	<text class="text" x="354" y="205">argc &lt; 2?</text>
+
+	<rect class="box-red" x="575" y="180" width="160" height="55"/>
+	<text class="text" x="615" y="212">print Error</text>
+
+	<rect class="box" x="80" y="295" width="180" height="55"/>
+	<text class="text" x="114" y="327">create sorter</text>
+
+	<rect class="box" x="320" y="295" width="180" height="55"/>
+	<text class="text" x="363" y="327">run()</text>
+
+	<rect class="box-yellow" x="560" y="295" width="210" height="55"/>
+	<text class="text" x="605" y="327">parse args</text>
+
+	<polygon class="decision" points="940,278 1075,323 940,368 805,323"/>
+	<text class="text" x="870" y="321">valid positive ints?</text>
+
+	<rect class="box-green" x="1095" y="295" width="220" height="55"/>
+	<text class="text" x="1124" y="327">fill vector and deque</text>
+
+	<polygon class="decision" points="205,430 345,475 205,520 65,475"/>
+	<text class="text" x="145" y="473">already sorted?</text>
+
+	<rect class="box-yellow" x="430" y="447" width="180" height="55"/>
+	<text class="text" x="470" y="479">print Before</text>
+
+	<rect class="box" x="680" y="447" width="210" height="55"/>
+	<text class="text" x="713" y="479">sort vector + time</text>
+
+	<rect class="box" x="960" y="447" width="210" height="55"/>
+	<text class="text" x="992" y="479">sort deque + time</text>
+
+	<rect class="box-green" x="560" y="575" width="210" height="55"/>
+	<text class="text" x="600" y="607">print result</text>
+
+	<rect class="box-blue" x="850" y="575" width="220" height="55"/>
+	<text class="text" x="884" y="607">print comparisons</text>
+
+	<rect class="box-blue" x="1135" y="575" width="145" height="55"/>
+	<text class="text" x="1188" y="607">end</text>
+
+	<path class="edge" d="M260 208 L280 208"/>
+	<path class="edge" d="M500 208 L575 208"/>
+	<text class="label" x="525" y="195">yes</text>
+	<path class="edge" d="M170 235 L170 295"/>
+	<path class="edge" d="M390 250 C390 275 170 265 170 295"/>
+	<text class="label" x="324" y="273">no</text>
+	<path class="edge" d="M260 323 L320 323"/>
+	<path class="edge" d="M500 323 L560 323"/>
+	<path class="edge" d="M770 323 L805 323"/>
+	<path class="edge" d="M1075 323 L1095 323"/>
+	<text class="label" x="1081" y="310">yes</text>
+	<path class="edge" d="M940 278 C940 245 735 245 690 180"/>
+	<text class="label" x="875" y="258">no</text>
+	<path class="edge" d="M1205 350 C1205 405 205 390 205 430"/>
+	<path class="edge" d="M345 475 L430 475"/>
+	<text class="label" x="365" y="463">no</text>
+	<path class="edge" d="M205 520 C205 602 520 602 560 602"/>
+	<text class="label" x="218" y="548">yes</text>
+	<path class="edge" d="M610 475 L680 475"/>
+	<path class="edge" d="M890 475 L960 475"/>
+	<path class="edge" d="M1065 502 C1065 560 770 548 665 575"/>
+	<path class="edge" d="M770 602 L850 602"/>
+	<path class="edge" d="M1070 602 L1135 602"/>
+	<path class="edge" d="M735 208 C1210 208 1220 525 1207 575"/>
+
+	<!-- sortContainer -->
+	<text class="section" x="60" y="710">2. sortContainer flow</text>
+
+	<rect class="box-blue" x="80" y="745" width="180" height="55"/>
+	<text class="text" x="122" y="777">sortContainer</text>
+
+	<rect class="box" x="330" y="745" width="235" height="55"/>
+	<text class="text" x="366" y="777">make Elements</text>
+
+	<rect class="box-yellow" x="635" y="745" width="260" height="55"/>
+	<text class="text" x="665" y="777">mergeInsertionSort</text>
+
+	<rect class="box-green" x="965" y="745" width="270" height="55"/>
+	<text class="text" x="997" y="777">copy values to container</text>
+
+	<path class="edge" d="M260 772 L330 772"/>
+	<path class="edge" d="M565 772 L635 772"/>
+	<path class="edge" d="M895 772 L965 772"/>
+
+	<text class="note" x="330" y="828">Element = value + original id. Id helps keep duplicate values ordered safely.</text>
+
+	<!-- merge insertion -->
+	<text class="section" x="60" y="900">3. mergeInsertionSort flow</text>
+
+	<rect class="box-blue" x="80" y="940" width="230" height="55"/>
+	<text class="text" x="122" y="972">input Elements</text>
+
+	<polygon class="decision" points="480,922 615,967 480,1012 345,967"/>
+	<text class="text" x="420" y="965">size &lt; 2?</text>
+
+	<rect class="box-green" x="675" y="940" width="180" height="55"/>
+	<text class="text" x="718" y="972">return input</text>
+
+	<rect class="box" x="80" y="1060" width="220" height="55"/>
+	<text class="text" x="132" y="1092">make pairs</text>
+
+	<rect class="box-yellow" x="370" y="1060" width="250" height="55"/>
+	<text class="text" x="402" y="1084">compare each pair</text>
+	<text class="small" x="421" y="1103">small left, large right</text>
+
+	<rect class="box" x="690" y="1060" width="250" height="55"/>
+	<text class="text" x="733" y="1092">collect largers</text>
+
+	<polygon class="decision" points="1130,1042 1270,1087 1130,1132 990,1087"/>
+	<text class="text" x="1072" y="1085">odd stray?</text>
+
+	<rect class="box-yellow" x="80" y="1190" width="220" height="55"/>
+	<text class="text" x="125" y="1222">save stray</text>
+
+	<rect class="box-blue" x="370" y="1190" width="250" height="55"/>
+	<text class="text" x="407" y="1222">sort largers again</text>
+
+	<rect class="box-green" x="690" y="1190" width="270" height="55"/>
+	<text class="text" x="722" y="1222">main_chain = largers</text>
+
+	<rect class="box" x="1030" y="1190" width="280" height="55"/>
+	<text class="text" x="1052" y="1214">insert first small at front</text>
+	<text class="small" x="1089" y="1233">b1 a1 a2 a3...</text>
+
+	<rect class="box-yellow" x="80" y="1320" width="270" height="55"/>
+	<text class="text" x="104" y="1352">other smalls go pending</text>
+
+	<rect class="box" x="420" y="1320" width="310" height="55"/>
+	<text class="text" x="445" y="1344">each pending keeps bound_id</text>
+	<text class="small" x="466" y="1363">bound = its large partner</text>
+
+	<rect class="box-yellow" x="800" y="1320" width="250" height="55"/>
+	<text class="text" x="837" y="1352">add stray pending</text>
+
+	<rect class="box-blue" x="1120" y="1320" width="220" height="55"/>
+	<text class="text" x="1140" y="1352">insert pending</text>
+
+	<rect class="box-green" x="590" y="1450" width="230" height="55"/>
+	<text class="text" x="636" y="1482">return sorted</text>
+
+	<path class="edge" d="M310 967 L345 967"/>
+	<path class="edge" d="M615 967 L675 967"/>
+	<text class="label" x="630" y="953">yes</text>
+	<path class="edge" d="M480 1012 C480 1040 190 1032 190 1060"/>
+	<text class="label" x="403" y="1034">no</text>
+	<path class="edge" d="M300 1087 L370 1087"/>
+	<path class="edge" d="M620 1087 L690 1087"/>
+	<path class="edge" d="M940 1087 L990 1087"/>
+	<path class="edge" d="M1130 1132 C1130 1180 300 1150 190 1190"/>
+	<text class="label" x="1140" y="1155">yes</text>
+	<path class="edge" d="M1130 1042 C1130 1008 495 1135 495 1190"/>
+	<text class="label" x="1090" y="1017">no</text>
+	<path class="edge" d="M300 1217 L370 1217"/>
+	<path class="edge" d="M620 1217 L690 1217"/>
+	<path class="edge" d="M960 1217 L1030 1217"/>
+	<path class="edge" d="M1170 1245 C1170 1310 215 1275 215 1320"/>
+	<path class="edge" d="M350 1347 L420 1347"/>
+	<path class="edge" d="M730 1347 L800 1347"/>
+	<path class="edge" d="M1050 1347 L1120 1347"/>
+	<path class="edge" d="M1230 1375 C1230 1450 820 1415 705 1450"/>
+
+	<!-- pending insertion -->
+	<text class="section" x="60" y="1585">4. Pending insertion with std::upper_bound</text>
+
+	<rect class="box-blue" x="80" y="1625" width="250" height="55"/>
+	<text class="text" x="113" y="1657">make Jacobsthal order</text>
+
+	<rect class="box" x="400" y="1625" width="250" height="55"/>
+	<text class="text" x="425" y="1657">pick pending element</text>
+
+	<polygon class="decision" points="840,1608 975,1653 840,1698 705,1653"/>
+	<text class="text" x="795" y="1651">has bound?</text>
+
+	<rect class="box-yellow" x="1050" y="1555" width="260" height="55"/>
+	<text class="text" x="1080" y="1587">find large partner</text>
+
+	<rect class="box-yellow" x="1050" y="1695" width="260" height="55"/>
+	<text class="text" x="1088" y="1727">bound = end</text>
+
+	<rect class="box" x="80" y="1810" width="300" height="55"/>
+	<text class="text" x="103" y="1842">search begin to bound</text>
+
+	<rect class="box-blue" x="450" y="1810" width="330" height="55"/>
+	<text class="text" x="482" y="1842">std::upper_bound(..., less)</text>
+
+	<rect class="box-green" x="850" y="1810" width="250" height="55"/>
+	<text class="text" x="882" y="1842">insert at position</text>
+
+	<polygon class="decision" points="1220,1793 1350,1838 1220,1883 1090,1838"/>
+	<text class="text" x="1170" y="1836">more pending?</text>
+
+	<rect class="box-green" x="590" y="1940" width="250" height="55"/>
+	<text class="text" x="637" y="1972">main_chain sorted</text>
+
+	<path class="edge" d="M330 1652 L400 1652"/>
+	<path class="edge" d="M650 1652 L705 1652"/>
+	<path class="edge" d="M975 1653 C1010 1653 1010 1582 1050 1582"/>
+	<text class="label" x="1000" y="1625">yes</text>
+	<path class="edge" d="M975 1653 C1010 1653 1010 1722 1050 1722"/>
+	<text class="label" x="1000" y="1692">no</text>
+	<path class="edge" d="M1180 1610 C1180 1800 230 1760 230 1810"/>
+	<path class="edge" d="M1180 1750 C1180 1800 360 1760 230 1810"/>
+	<path class="edge" d="M380 1837 L450 1837"/>
+	<path class="edge" d="M780 1837 L850 1837"/>
+	<path class="edge" d="M1100 1837 L1090 1837"/>
+	<path class="edge" d="M1220 1793 C1220 1585 525 1575 525 1625"/>
+	<text class="label" x="1233" y="1780">yes</text>
+	<path class="edge" d="M1220 1883 C1220 1970 840 1925 715 1940"/>
+	<text class="label" x="1234" y="1913">no</text>
+
+	<!-- comparator -->
+	<text class="section" x="60" y="2040">5. less comparator: count + compare value + compare id for duplicates</text>
+	<rect class="box-blue" x="80" y="2065" width="250" height="45"/>
+	<text class="text" x="105" y="2093">_comparison_count++</text>
+
+	<rect class="box" x="395" y="2065" width="260" height="45"/>
+	<text class="text" x="424" y="2093">compare lhs.value</text>
+
+	<rect class="box" x="720" y="2065" width="260" height="45"/>
+	<text class="text" x="755" y="2093">if equal compare id</text>
+
+	<rect class="box-green" x="1045" y="2065" width="260" height="45"/>
+	<text class="text" x="1094" y="2093">return bool</text>
+
+	<path class="edge-soft" d="M330 2087 L395 2087"/>
+	<path class="edge-soft" d="M655 2087 L720 2087"/>
+	<path class="edge-soft" d="M980 2087 L1045 2087"/>
+</svg>

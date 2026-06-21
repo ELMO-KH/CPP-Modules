@@ -17,7 +17,7 @@ PmergeMe::Element::Element( int value, size_t id ) : value(value), id(id) {}
 PmergeMe::Pair::Pair( const Element &first, const Element &second ) :
 	small(first),
 	large(second) {
-	if (less(large, small))
+	if (_comp(large, small))
 		std::swap(small, large);
 }
 
@@ -51,33 +51,33 @@ void	PmergeMe::run( int argc, char **argv ) {
 	clock_t	start;
 	clock_t	vector_time;
 	clock_t	deque_time;
-	size_t	vector_comparisons;
-	size_t	deque_comparisons;
+	// size_t	vector_comparisons;
+	// size_t	deque_comparisons;
 
 	parseArguments(argc, argv);
-	if (isSorted(_vector_data)) {
-		std::cout << "Already sorted" << std::endl;
-		return ;
-	}
+	// if (isSorted(_vector_data)) {
+	// 	std::cout << "Already sorted" << std::endl;
+	// 	return ;
+	// }
 	printBefore();
 
 	resetComparisonCount();
 	start = clock();
 	sortContainer(_vector_data);
 	vector_time = clock() - start;
-	vector_comparisons = getComparisonCount();
+	// vector_comparisons = getComparisonCount();
 
 	resetComparisonCount();
 	start = clock();
 	sortContainer(_deque_data);
 	deque_time = clock() - start;
-	deque_comparisons = getComparisonCount();
+	// deque_comparisons = getComparisonCount();
 
 	printAfter();
 	printTiming("std::vector", _vector_data.size(), vector_time);
 	printTiming("std::deque", _deque_data.size(), deque_time);
-	printComparisons("std::vector", vector_comparisons);
-	printComparisons("std::deque", deque_comparisons);
+	// printComparisons("std::vector", vector_comparisons);
+	// printComparisons("std::deque", deque_comparisons);
 }
 
 void	PmergeMe::parseArguments( int argc, char **argv ) {
@@ -140,13 +140,6 @@ int	PmergeMe::parsePositiveInteger( const std::string &token ) {
 	if (*end != '\0' || errno == ERANGE || value < 0 || value > INT_MAX)
 		throw std::invalid_argument("Error");
 	return static_cast<int>(value);
-}
-
-bool	PmergeMe::less( const Element &lhs, const Element &rhs ) {
-	_comparison_count++;
-	if (lhs.value != rhs.value)
-		return lhs.value < rhs.value;
-	return lhs.id < rhs.id;
 }
 
 void	PmergeMe::resetComparisonCount( void ) {
@@ -220,8 +213,6 @@ std::vector<size_t>	PmergeMe::makeInsertionOrder( size_t pending_size ) {
 		previous = current;
 		jacobsthal_index++;
 		current = jacobsthal(jacobsthal_index);
-		if (current <= previous)
-			current = previous + 1;
 	}
 	return order;
 }
@@ -229,8 +220,8 @@ std::vector<size_t>	PmergeMe::makeInsertionOrder( size_t pending_size ) {
 std::vector<PmergeMe::Element>
 PmergeMe::mergeInsertionSort( const std::vector<Element> &input ) {
 	std::vector<Pair>		pairs;
-	std::vector<Element>		winners;
-	std::vector<Element>		sorted_winners;
+	std::vector<Element>		largers;
+	std::vector<Element>		sorted_largers;
 	std::vector<Element>		main_chain;
 	std::vector<Pending>		pending;
 	std::vector<size_t>		order;
@@ -240,21 +231,21 @@ PmergeMe::mergeInsertionSort( const std::vector<Element> &input ) {
 	if (input.size() < 2)
 		return input;
 	pairs.reserve(input.size() / 2);
-	winners.reserve(input.size() / 2);
+	largers.reserve(input.size() / 2);
 	has_stray = (input.size() % 2 != 0);
 	for (size_t i = 0; i + 1 < input.size(); i += 2) {
 		pairs.push_back(Pair(input[i], input[i + 1]));
-		winners.push_back(pairs.back().large);
+		largers.push_back(pairs.back().large);
 	}
 	if (has_stray)
 		stray = input.back();
-	sorted_winners = mergeInsertionSort(winners);
-	main_chain = sorted_winners;
-	if (sorted_winners.empty())
+	sorted_largers = mergeInsertionSort(largers);
+	main_chain = sorted_largers;
+	if (sorted_largers.empty())
 		return input;
-	for (size_t i = 0; i < sorted_winners.size(); i++) {
+	for (size_t i = 0; i < sorted_largers.size(); i++) {
 		for (size_t j = 0; j < pairs.size(); j++) {
-			if (pairs[j].large.id == sorted_winners[i].id) {
+			if (pairs[j].large.id == sorted_largers[i].id) {
 				if (i == 0)
 					main_chain.insert(main_chain.begin(), pairs[j].small);
 				else
@@ -273,10 +264,15 @@ PmergeMe::mergeInsertionSort( const std::vector<Element> &input ) {
 
 		if (entry.has_bound)
 			bound = findById(main_chain, entry.bound_id);
-		position = upperBound(main_chain.begin(), bound, entry.value);
+		position = std::upper_bound(main_chain.begin(), bound, entry.value, _comp);
 		main_chain.insert(position, entry.value);
 	}
 	return main_chain;
+}
+
+bool	PmergeMe::_comp( const Element &lhs, const Element &rhs ) {
+	_comparison_count++;
+	return lhs.value < rhs.value;
 }
 
 std::vector<PmergeMe::Element>::iterator
@@ -286,29 +282,4 @@ PmergeMe::findById( std::vector<Element> &chain, size_t id ) {
 			return it;
 	}
 	return chain.end();
-}
-
-std::vector<PmergeMe::Element>::iterator
-PmergeMe::upperBound(
-	std::vector<Element>::iterator first,
-	std::vector<Element>::iterator last,
-	const Element &value
-) {
-	std::vector<Element>::iterator	it;
-	size_t							count;
-	size_t							step;
-
-	count = last - first;
-	while (count > 0) {
-		it = first;
-		step = count / 2;
-		it += step;
-		if (!less(value, *it)) {
-			first = ++it;
-			count -= step + 1;
-		} else {
-			count = step;
-		}
-	}
-	return first;
 }
