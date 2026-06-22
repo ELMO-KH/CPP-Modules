@@ -1,16 +1,22 @@
 #include "BitcoinExchange.hpp"
+#include <exception>
 
 int main(int ac, char *av[])
 {
     if (ac != 2)
     {
-        std::cerr << "Usage: " << av[0] << " <input_file>" << std::endl;
+        std::cerr << "Error: could not open file." << std::endl;
         return 1;
     }
 
-    BitcoinExchange bitcoinExchange;
+    try {
+        BitcoinExchange bitcoinExchange;
 
-    bitcoinExchange.processInputFile(av[1]);
+        bitcoinExchange.processInputFile(av[1]);
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << std::endl;
+        return 1;
+    }
 
     return 0;
 }
